@@ -15,6 +15,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
   bool _isLoading = false;
 
   Future<void> _handleRegister(BuildContext context) async {
@@ -86,6 +88,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   validator: (value) => value == null || value.length < 6
                       ? 'Password must be at least 6 characters'
                       : null,
+                ),
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: _confirmPasswordController,
+                  decoration: const InputDecoration(
+                      labelText: 'Confirm Password',
+                      border: OutlineInputBorder()),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value != _passwordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 24),
                 _isLoading

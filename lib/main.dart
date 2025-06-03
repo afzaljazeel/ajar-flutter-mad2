@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
+import 'providers/product_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/home_screen.dart';
 
@@ -14,8 +15,13 @@ class AJARApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AuthProvider()..checkLoginStatus(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (_) => AuthProvider()..checkLoginStatus()),
+        ChangeNotifierProvider(
+            create: (_) => ProductProvider()..loadProducts()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'AJAR',
