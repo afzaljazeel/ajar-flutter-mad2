@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/product.dart';
+import '../providers/wishlist_provider.dart';
 import '../screens/product/product_detail_screen.dart';
 
 class ProductCard extends StatelessWidget {
@@ -38,17 +40,43 @@ class ProductCard extends StatelessWidget {
           children: [
             AspectRatio(
               aspectRatio: 1.1,
-              child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(14)),
-                child: Image.network(
-                  product.displayImage,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Center(
-                    child: Icon(Icons.image_not_supported,
-                        size: 40, color: Colors.grey),
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(14)),
+                    child: Image.network(
+                      product.displayImage,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const Center(
+                        child: Icon(Icons.image_not_supported,
+                            size: 40, color: Colors.grey),
+                      ),
+                    ),
                   ),
-                ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Consumer<WishlistProvider>(
+                      builder: (_, wish, __) => IconButton(
+                        icon: Icon(
+                          wish.isFavorite(product)
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: wish.isFavorite(product)
+                              ? Colors.red
+                              : Colors.white,
+                          size: 22,
+                        ),
+                        onPressed: () => wish.toggleFavorite(product),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.black.withOpacity(0.4),
+                          shape: const CircleBorder(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(

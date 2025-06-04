@@ -1,38 +1,60 @@
 import 'package:flutter/material.dart';
 import '../models/cart_item.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/product.dart';
 
 class CartProvider with ChangeNotifier {
-  final List<CartItem> _items = [];
-
+  List<CartItem> _items = [];
   List<CartItem> get items => _items;
 
-  void addToCart(Product product, {String? size, String? variant}) {
-    // Check if item already exists with same size/variant
-    final existingIndex = _items.indexWhere((item) =>
-        item.product.id == product.id &&
-        item.size == size &&
-        item.variant == variant);
+  double get total =>
+      _items.fold(0, (sum, item) => sum + item.product.price * item.quantity);
 
-    if (existingIndex != -1) {
-      _items[existingIndex].quantity += 1;
+  CartProvider() {
+    loadCart(); // 🟢 Auto-load on startup
+  }
+
+  void addToCart(CartItem item) {
+    final existing = _items.indexWhere((e) =>
+        e.product.id == item.product.id &&
+        e.size == item.size &&
+        e.variant == item.variant);
+
+    if (existing != -1) {
+      _items[existing].quantity += item.quantity;
     } else {
-      _items.add(CartItem(product: product, size: size, variant: variant));
+      _items.add(item);
     }
-
+    saveCart();
     notifyListeners();
   }
 
   void removeFromCart(CartItem item) {
     _items.remove(item);
+    saveCart();
     notifyListeners();
   }
 
   void clearCart() {
     _items.clear();
+    saveCart();
     notifyListeners();
   }
 
-  double get total =>
-      _items.fold(0, (sum, item) => sum + item.product.price * item.quantity);
+  Future<void> saveCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = _items.map((e) => e.toJson()).toList();
+    prefs.setString('cart', jsonEncode(data));
+  }
+
+  Future<void> loadCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('cart');
+    if (jsonString != null) {
+      final List decoded = jsonDecode(jsonString);
+      _items = decoded.map((e) => CartItem.fromJson(e)).toList();
+      notifyListeners();
+    }
+  }
 }

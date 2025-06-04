@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "name": "Nike Air Force 1",
+    "price": 19999.00,
+    "image": "https://via.placeholder.com/200",
+    "sizes": ["38", "39", "40"],
+    "variants": ["White"]
+  },
+  {
+    "id": 2,
+    "name": "Tom Ford Ombre Leather",
+    "price": 34000.00,
+    "image": "https://via.placeholder.com/200",
+    "sizes": [],
+    "variants": ["100ml"]
+  }
+]

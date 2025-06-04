@@ -57,8 +57,10 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/data/fallback_products.json
 
   fonts:
     - family: Poppins
       fonts:
         - asset: assets/fonts/Poppins-Regular.ttf
+
