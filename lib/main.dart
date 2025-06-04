@@ -5,6 +5,7 @@ import 'providers/auth_provider.dart';
 import 'providers/product_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/home_screen.dart';
+import 'providers/cart_provider.dart';
 
 void main() {
   runApp(const AJARApp());
@@ -21,11 +22,13 @@ class AJARApp extends StatelessWidget {
             create: (_) => AuthProvider()..checkLoginStatus()),
         ChangeNotifierProvider(
             create: (_) => ProductProvider()..loadProducts()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'AJAR',
         theme: ThemeData(
+          fontFamily: 'Poppins',
           useMaterial3: true,
           colorSchemeSeed: Colors.deepPurple,
         ),

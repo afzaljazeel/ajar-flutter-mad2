@@ -1,6 +1,6 @@
-// lib/widgets/product_card.dart
 import 'package:flutter/material.dart';
 import '../models/product.dart';
+import '../screens/product/product_detail_screen.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -9,9 +9,17 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 🔍 Debug the image URL
+    print('IMAGE DEBUG: ${product.displayImage}');
+
     return GestureDetector(
       onTap: () {
-        // : Navigate to product detail
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProductDetailScreen(product: product),
+          ),
+        );
       },
       child: Container(
         decoration: BoxDecoration(

@@ -12,16 +12,17 @@ class BottomNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: currentIndex,
-      selectedItemColor: Colors.deepPurple,
+      backgroundColor: Colors.white,
+      selectedItemColor: Colors.black,
       unselectedItemColor: Colors.grey,
+      type: BottomNavigationBarType.fixed,
+      currentIndex: currentIndex,
       onTap: onTap,
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'),
         BottomNavigationBarItem(
-            icon: Icon(Icons.category), label: 'Categories'),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag), label: 'Orders'),
+            icon: Icon(Icons.shopping_bag_outlined), label: 'Orders'),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
       ],
     );

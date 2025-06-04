@@ -1,4 +1,3 @@
-// lib/widgets/home_banner.dart
 import 'package:flutter/material.dart';
 
 class HomeBanner extends StatelessWidget {
@@ -10,10 +9,8 @@ class HomeBanner extends StatelessWidget {
       height: 160,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: Colors.grey.shade900,
         image: const DecorationImage(
-          image: AssetImage(
-              'assets/images/banner.jpg'), // replace with your asset or network image
+          image: AssetImage('assets/images/banner.jpg'),
           fit: BoxFit.cover,
         ),
       ),

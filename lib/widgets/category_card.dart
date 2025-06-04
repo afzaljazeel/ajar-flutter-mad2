@@ -3,26 +3,34 @@ import 'package:flutter/material.dart';
 
 class CategoryCard extends StatelessWidget {
   final String title;
-  final IconData icon;
+  final String imagePath;
 
-  const CategoryCard({super.key, required this.title, required this.icon});
+  const CategoryCard({super.key, required this.title, required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
         margin: const EdgeInsets.symmetric(horizontal: 6),
+        height: 100,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: Colors.grey.shade200,
+          image: DecorationImage(
+            image: AssetImage(imagePath),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(0.4), BlendMode.darken),
+          ),
         ),
-        child: Column(
-          children: [
-            Icon(icon, size: 32, color: Colors.black87),
-            const SizedBox(height: 8),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-          ],
+        child: Center(
+          child: Text(
+            title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
         ),
       ),
     );

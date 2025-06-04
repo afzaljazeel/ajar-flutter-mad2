@@ -17,9 +17,23 @@ class HomeTab extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("AJAR"),
-        actions: const [Icon(Icons.shopping_cart)],
+        title: const Text(
+          "AJAR",
+          style: TextStyle(
+            fontFamily: 'Urbanist', // or 'Poppins' based on your Laravel setup
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: Icon(Icons.shopping_cart_checkout_rounded), // new icon
+          )
+        ],
         elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -32,10 +46,12 @@ class HomeTab extends StatelessWidget {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
-                CategoryCard(title: "Shoes", icon: Icons.directions_run),
-                CategoryCard(title: "Perfumes", icon: Icons.local_florist),
+                CategoryCard(
+                    title: 'Shoes', imagePath: 'assets/images/shoes_bg.jpg'),
+                CategoryCard(
+                    title: 'Perfumes',
+                    imagePath: 'assets/images/perfumes_bg.jpg'),
               ],
             ),
             const SizedBox(height: 28),
