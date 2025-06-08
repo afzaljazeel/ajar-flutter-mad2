@@ -6,60 +6,76 @@ import '../../providers/product_provider.dart';
 import '../../widgets/home_banner.dart';
 import '../../widgets/category_card.dart';
 import '../../widgets/product_card.dart';
+import '../../widgets/offline_banner.dart';
 
 class HomeTab extends StatelessWidget {
   const HomeTab({super.key});
 
+  void _goToExplore(BuildContext context, String category) {
+    Navigator.pushNamed(
+      context,
+      '/explore',
+      arguments: {'category': category},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
-    final products = productProvider.products;
+    final products = productProvider.products.take(8).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "AJAR",
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        title: Text(
+          'AJAR',
           style: TextStyle(
-            fontFamily: 'Urbanist', // or 'Poppins' based on your Laravel setup
+            fontFamily: 'Urbanist',
             fontSize: 22,
             fontWeight: FontWeight.bold,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
           ),
+        ),
+        iconTheme: IconThemeData(
+          color: Theme.of(context)
+              .iconTheme
+              .color, // applies to cart/wishlist icons
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.favorite_border),
-            onPressed: () {
-              Navigator.pushNamed(context, '/wishlist');
-            },
+            icon: const Icon(Icons.favorite_border),
+            onPressed: () => Navigator.pushNamed(context, '/wishlist'),
           ),
           IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.pushNamed(context, '/cart');
-            },
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () => Navigator.pushNamed(context, '/cart'),
           ),
         ],
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const OfflineBanner(),
             const HomeBanner(),
             const SizedBox(height: 24),
-            const Text("Categories",
+            const Text("We Specialized In",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             Row(
-              children: const [
+              children: [
                 CategoryCard(
-                    title: 'Shoes', imagePath: 'assets/images/shoes_bg.jpg'),
+                  title: 'Shoes',
+                  imagePath: 'assets/images/shoes_bg.jpg',
+                  onTap: () => _goToExplore(context, 'Shoes'),
+                ),
                 CategoryCard(
-                    title: 'Perfumes',
-                    imagePath: 'assets/images/perfumes_bg.jpg'),
+                  title: 'Perfumes',
+                  imagePath: 'assets/images/perfumes_bg.jpg',
+                  onTap: () => _goToExplore(context, 'Perfumes'),
+                ),
               ],
             ),
             const SizedBox(height: 28),
@@ -79,9 +95,8 @@ class HomeTab extends StatelessWidget {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                 ),
-                itemBuilder: (context, index) {
-                  return ProductCard(product: products[index]);
-                },
+                itemBuilder: (context, index) =>
+                    ProductCard(product: products[index]),
               ),
           ],
         ),

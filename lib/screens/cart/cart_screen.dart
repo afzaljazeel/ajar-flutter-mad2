@@ -33,7 +33,7 @@ class CartScreen extends StatelessWidget {
                         ),
                         child: ListTile(
                           leading: Image.network(
-                            item.product.displayImage,
+                            item.product.imagePath,
                             width: 60,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) =>
@@ -45,7 +45,14 @@ class CartScreen extends StatelessWidget {
                           ),
                           trailing: IconButton(
                             icon: const Icon(Icons.delete_outline),
-                            onPressed: () => cart.removeFromCart(item),
+                            onPressed: () => cart.removeFromCart(item.id),
+                          ),
+                          onTap: () =>
+                              ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  "${item.product.name} removed from cart."),
+                            ),
                           ),
                         ),
                       );
@@ -76,10 +83,7 @@ class CartScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Proceeding to checkout...")),
-                        );
+                        Navigator.pushNamed(context, '/checkout');
                       },
                       child: const Text("Checkout",
                           style: TextStyle(color: Colors.white)),

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../models/product.dart';
-import '../../models/cart_item.dart';
 import 'package:provider/provider.dart';
+import '../../models/product.dart';
 import '../../providers/cart_provider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
+  final void Function()? onThemeToggle;
 
-  const ProductDetailScreen({super.key, required this.product});
+  const ProductDetailScreen({
+    super.key,
+    required this.product,
+    this.onThemeToggle,
+  });
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -20,18 +24,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.name),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        title: Text(product.name, overflow: TextOverflow.ellipsis),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: Icon(Icons.favorite_border),
-          )
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite_border),
+            onPressed: () => Navigator.pushNamed(context, '/wishlist'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () => Navigator.pushNamed(context, '/cart'),
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -45,50 +54,39 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   final imageUrl =
                       (product.images != null && product.images!.isNotEmpty)
                           ? product.images![index]
-                          : product.displayImage;
+                          : product.imagePath;
 
                   return Image.network(
                     imageUrl,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const Center(
-                      child: Icon(Icons.image_not_supported, size: 40),
-                    ),
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.image_not_supported, size: 40),
                   );
                 },
               ),
             ),
-            const SizedBox(height: 24),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    product.name,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Rs. ${product.price.toStringAsFixed(2)}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 30),
+                  Text(product.name,
+                      style: theme.textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Text("Rs. ${product.price.toStringAsFixed(2)}",
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      )),
+                  const SizedBox(height: 24),
+
+                  // Size
                   if (product.sizes != null && product.sizes!.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Select Size",
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
+                        Text("Select Size", style: theme.textTheme.labelLarge),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
@@ -98,26 +96,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     selected: selectedSize == size,
                                     onSelected: (_) =>
                                         setState(() => selectedSize = size),
-                                    selectedColor: Colors.black,
+                                    selectedColor: theme.colorScheme.primary,
                                     labelStyle: TextStyle(
                                       color: selectedSize == size
                                           ? Colors.white
-                                          : Colors.black,
+                                          : null,
                                     ),
                                   ))
                               .toList(),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 20),
                       ],
                     ),
+
+                  // Variant
                   if (product.variants != null && product.variants!.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Select Variant",
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
+                        Text("Select Variant",
+                            style: theme.textTheme.labelLarge),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
@@ -127,22 +125,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     selected: selectedVariant == variant,
                                     onSelected: (_) => setState(
                                         () => selectedVariant = variant),
-                                    selectedColor: Colors.black,
+                                    selectedColor: theme.colorScheme.primary,
                                     labelStyle: TextStyle(
                                       color: selectedVariant == variant
                                           ? Colors.white
-                                          : Colors.black,
+                                          : null,
                                     ),
                                   ))
                               .toList(),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 20),
                       ],
                     ),
+
                   const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
+                      icon: const Icon(Icons.shopping_cart_checkout),
+                      label: const Text("Add to Cart"),
                       onPressed: () {
                         if (product.sizes != null &&
                             product.sizes!.isNotEmpty &&
@@ -153,7 +154,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           );
                           return;
                         }
-
                         if (product.variants != null &&
                             product.variants!.isNotEmpty &&
                             selectedVariant == null) {
@@ -164,28 +164,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           return;
                         }
 
-                        final cart =
-                            Provider.of<CartProvider>(context, listen: false);
-                        cart.addToCart(
-                          CartItem(
-                            product: product,
-                            size: selectedSize,
-                            variant: selectedVariant,
-                          ),
+                        Provider.of<CartProvider>(context, listen: false)
+                            .addToCart(
+                          product: product,
+                          quantity: 1,
+                          size: selectedSize,
+                          variant: selectedVariant,
                         );
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Added to cart!")),
                         );
                       },
-                      icon: const Icon(Icons.shopping_cart_checkout),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      label: const Text(
-                        "Add to Cart",
-                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),

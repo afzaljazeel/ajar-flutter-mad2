@@ -1,53 +1,43 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/product.dart';
+import '../services/wishlist_service.dart';
 
 class WishlistProvider with ChangeNotifier {
-  List<Product> _wishlist = [];
+  final WishlistService _service = WishlistService();
+  List<Product> _items = [];
+  bool _isLoading = false;
 
-  List<Product> get items => _wishlist; // ✅ Use 'items' to match UI usage
-
-  WishlistProvider() {
-    loadWishlist();
-  }
-
-  void toggleFavorite(Product product) {
-    if (isFavorite(product)) {
-      _wishlist.removeWhere((p) => p.id == product.id);
-    } else {
-      _wishlist.add(product);
-    }
-    saveWishlist();
-    notifyListeners();
-  }
+  List<Product> get items => _items;
+  bool get isLoading => _isLoading;
 
   bool isFavorite(Product product) {
-    return _wishlist.any((p) => p.id == product.id);
-  }
-
-  Future<void> saveWishlist() async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = _wishlist
-        .map((p) => {
-              'id': p.id,
-              'name': p.name,
-              'price': p.price,
-              'image': p.image,
-              'sizes': p.sizes,
-              'variants': p.variants,
-            })
-        .toList();
-    prefs.setString('wishlist', jsonEncode(data));
+    return _items.any((p) => p.id == product.id);
   }
 
   Future<void> loadWishlist() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('wishlist');
-    if (jsonString != null) {
-      final List decoded = jsonDecode(jsonString);
-      _wishlist = decoded.map((p) => Product.fromJson(p)).toList();
-      notifyListeners();
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _items = await _service.fetchWishlist();
+      print('✅ Wishlist loaded: ${_items.length} items');
+    } catch (e) {
+      print('❌ Wishlist error: $e');
+      _items = [];
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> toggleFavorite(Product product) async {
+    try {
+      await _service.toggleWishlist(product);
+
+      // Refresh wishlist from server after toggle
+      await loadWishlist();
+    } catch (e) {
+      print('❌ Toggle wishlist failed: $e');
     }
   }
 }

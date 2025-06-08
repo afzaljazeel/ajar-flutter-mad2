@@ -28,9 +28,14 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  image_picker: ^1.0.4
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  connectivity_plus: ^5.0.2
+  battery_plus: ^5.0.2
+  geolocator: ^10.0.0
+  geocoding: ^2.1.0
 
   # 
   http: ^0.13.6
@@ -40,6 +45,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -59,8 +66,17 @@ flutter:
     - assets/images/
     - assets/data/fallback_products.json
 
+
   fonts:
     - family: Poppins
       fonts:
         - asset: assets/fonts/Poppins-Regular.ttf
 
+
+
+
+  # The `connectivity_plus` package is used to check the network connectivity status.
+  # It provides a way to listen for changes in connectivity and retrieve the current status.
+  # This is useful for handling network-dependent features in the app.
+  
+  # Add any additional dependencies here as needed.

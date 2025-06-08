@@ -1,28 +1,27 @@
-// lib/models/cart_item.dart
 import 'product.dart';
 
-class CartItem {
-  final int id;
+class OrderItem {
   final Product product;
   final int quantity;
   final String? size;
   final String? variant;
+  final double price;
 
-  CartItem({
-    required this.id,
+  OrderItem({
     required this.product,
     required this.quantity,
     this.size,
     this.variant,
+    required this.price,
   });
 
-  factory CartItem.fromJson(Map<String, dynamic> json) {
-    return CartItem(
-      id: json['id'],
+  factory OrderItem.fromJson(Map<String, dynamic> json) {
+    return OrderItem(
       product: Product.fromJson(json['product']),
       quantity: json['quantity'],
       size: json['size'],
       variant: json['variant'],
+      price: double.parse(json['price'].toString()),
     );
   }
 }

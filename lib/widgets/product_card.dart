@@ -12,7 +12,6 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 🔍 Debug the image URL
-    print('IMAGE DEBUG: ${product.displayImage}');
 
     return GestureDetector(
       onTap: () {
@@ -46,10 +45,16 @@ class ProductCard extends StatelessWidget {
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(14)),
                     child: Image.network(
-                      product.displayImage,
+                      product.imagePath,
                       fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return const Center(child: CircularProgressIndicator());
+                      },
                       errorBuilder: (_, __, ___) => const Center(
-                        child: Icon(Icons.image_not_supported,
+                        child: Icon(Icons.broken_image,
                             size: 40, color: Colors.grey),
                       ),
                     ),
